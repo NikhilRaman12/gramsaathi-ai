@@ -10,7 +10,7 @@ bedrock = boto3.client(
     region_name=os.getenv("AWS_REGION", "us-east-1")
 )
 
-MODEL_ID = "anthropic.claude-v2"  # Example model, replace with the one you want
+MODEL_ID = "anthropic.claude-v2"  
 
 def gramsaathi(query: str) -> str:
     """
@@ -40,3 +40,4 @@ demo = gr.Interface(
 
 if __name__ == "__main__":
     demo.launch()
+
