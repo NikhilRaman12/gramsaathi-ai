@@ -1,43 +1,29 @@
 import gradio as gr
-import boto3
-import json
-import os
+from scripts.generator import GramsaathiEngine  # adjust path if needed
 
-# Configure AWS Bedrock client
-# Make sure your AWS credentials are set in the environment (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
-bedrock = boto3.client(
-    service_name="bedrock-runtime",
-    region_name=os.getenv("AWS_REGION", "us-east-1")
-)
+# Initialize engine
+engine = GramsaathiEngine()
 
-MODEL_ID = "anthropic.claude-v2"  
+def ask_query(user_input):
+    # Pass query to engine
+    response = engine.run(user_input)  # run() internally calls generate()
+    return response
 
-def gramsaathi(query: str) -> str:
-    """
-    Send farmer query to Bedrock model and return AI advice.
-    """
-    try:
-        response = bedrock.invoke_model(
-            modelId=MODEL_ID,
-            body=json.dumps({
-                "prompt": f"Farmer question: {query}\nProvide clear, practical agricultural advice.",
-                "max_tokens_to_sample": 300
-            })
-        )
-        result = json.loads(response["body"].read())
-        return "🌾 GramSaathi AI advice: " + result.get("completion", "").strip()
-    except Exception as e:
-        return f"Error: {str(e)}"
-
-# Gradio interface
+# Build Gradio interface
 demo = gr.Interface(
-    fn=gramsaathi,
-    inputs=gr.Textbox(lines=2, placeholder="Ask about crops, soil, irrigation..."),
-    outputs="text",
-    title="GramSaathi AI (Bedrock)",
-    description="AI assistant for farmers powered by AWS Bedrock"
+    fn=ask_query,
+    inputs=gr.Textbox(
+        lines=2,
+        placeholder="Ask about PM Kisan, PM Fasal Bima Yojana, rural development, sustainability..."
+    ),
+    outputs=gr.Textbox(label="Gramsaathi AI Response"),
+    title="🌾 Gramsaathi AI – Rural Development & Sustainability Assistant",
+    description=(
+        "Gramsaathi AI is a RAG-based assistant designed to support farmers and rural communities. "
+        "It uses real government scheme data, AWS Bedrock integration, and guardrails for safe, "
+        "grounded answers. Ask about agriculture, rural development, or sustainability initiatives."
+    )
 )
 
 if __name__ == "__main__":
-    demo.launch()
-
+    demo.launch(share=True)

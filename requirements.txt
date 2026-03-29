@@ -1,2 +1,22 @@
-gradio
-boto3
+# Web frameworks
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+gradio==4.44.1
+
+# AWS + cloud
+boto3>=1.34.0
+s3fs
+
+# LangChain + vector search
+langchain==0.2.11
+langchain-community==0.2.10
+faiss-cpu
+
+# PDF parsing
+PyPDF2
+
+# Core utilities
+numpy
+requests
+tqdm
+

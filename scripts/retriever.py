@@ -1,9 +1,12 @@
-from vector_db import VectorStores
+from scripts.vector_db import VectorStores
 
 class Retriever:
-    def __init__(self):
-        self.vectorstore = VectorStores().vectorstore
+    def __init__(self, vector_store=None):
+        if vector_store:
+            self.vector_store = vector_store
+        else:
+            self.vector_store = VectorStores().vectorstore
 
-    def query(self, q, top_k=2):
-        results = self.vectorstore.similarity_search(q, k=top_k)
-        return [r.page_content for r in results]
+    def get_context(self, question, k=3):
+        docs = self.vector_store.similarity_search(question, k=k)
+        return "\n".join([doc.page_content for doc in docs])
